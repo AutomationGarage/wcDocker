@@ -285,9 +285,10 @@ define([
          * @param {module:wcDocker.DOCK} location - The docking location to place this panel.
          * @param {module:wcPanel|module:wcDocker.COLLAPSED} [targetPanel] - A target panel to dock relative to, or use {@link wcDocker.COLLAPSED} to collapse it to the side or bottom.
          * @param {module:wcDocker~PanelOptions} [options] - Other options for panel placement.
+         * @param {Object} [data] - Data to pass to onCreate
          * @returns {module:wcPanel|Boolean} - The newly created panel object, or false if no panel was created.
          */
-        addPanel: function (typeName, location, targetPanel, options) {
+        addPanel: function (typeName, location, targetPanel, options,data) {
             function __addPanel(panel) {
                 if (location === wcDocker.DOCK.STACKED) {
                     this.__addPanelGrouped(panel, targetPanel, options);
@@ -323,7 +324,7 @@ define([
                     var panel = new (this.__getClass('wcPanel'))(this, typeName, panelType.options);
                     panel.__container(this.$transition);
                     var panelOptions = (panelType.options && panelType.options.options) || {};
-                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions);
+                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions,data);
 
                     __addPanel.call(this, panel);
                     return panel;
@@ -1274,7 +1275,10 @@ define([
                 this.menu('.wcFrame', [], true);
             }
 
-            this.theme(this._options.theme);
+            /*
+            if (this._options.theme)
+                this.theme(this._options.theme);
+            */
 
             // Set up our responsive updater.
             this._updateId = setInterval(function () {
@@ -1367,6 +1371,10 @@ define([
                     for (var i = 0; i < self._frameList.length; ++i) {
                         self._frameList[i].__shadow(false);
                     }
+                }
+
+                if(self._draggingFrameSizer){
+                    self.trigger(wcDocker.EVENT.END_FLOAT_RESIZE);
                 }
 
                 if (self._ghost && (self._draggingFrame || self._creatingPanel)) {
@@ -1585,6 +1593,9 @@ define([
                 } else if (self._draggingFrame && !self._draggingFrameTab) {
                     self._draggingFrame.__move(mouse);
                     self._draggingFrame.__update();
+                    if(self._draggingFrameSizer){
+                        self.trigger(wcDocker.EVENT.END_FLOAT_RESIZE);
+                    }
                 }
                 return true;
             }
@@ -1809,6 +1820,10 @@ define([
                     return true;
                 }
 
+                if ($(event.target).hasClass('wcPanelCloseIcon')) {
+                    return self.__closePanel(event.target.__panel);
+                }
+
                 lastLButtonDown = new Date().getTime();
 
                 $('body').addClass('wcDisableSelection');
@@ -1871,6 +1886,8 @@ define([
                 }
                 if (self._draggingFrame) {
                     self.__focus(self._draggingFrame);
+                    //extra
+                    var focusFrame = self._focusFrame;
                 }
                 return true;
             }
@@ -1938,6 +1955,10 @@ define([
                 }
                 if (self._draggingFrame) {
                     self.__focus(self._draggingFrame);
+                }
+
+                if(self._draggingFrameSizer){
+                    self.trigger(wcDocker.EVENT.BEGIN_FLOAT_RESIZE);
                 }
                 return true;
             }
@@ -2316,7 +2337,8 @@ define([
         // Params:
         //    eventName   The name of the event.
         //    data        A custom data parameter to pass to all handlers.
-        __trigger: function (eventName, data) {
+        //    panel       [optional] The panel associated with the event
+        __trigger: function (eventName, data, panel) {
             if (!eventName) {
                 return;
             }
@@ -2326,7 +2348,7 @@ define([
             if (this._events[eventName]) {
                 var events = this._events[eventName].slice(0);
                 for (var i = 0; i < events.length; ++i) {
-                    results.push(events[i].call(this, data));
+                    results.push(events[i].call(this, data,panel));
                 }
             }
 

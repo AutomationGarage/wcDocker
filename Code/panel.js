@@ -12,6 +12,38 @@ define([
      */
     var Module = dcl(base, {
         declaredClass: 'wcPanel',
+        /**
+         * Std API
+         */
+        select:function(){
+            var frame = this.getFrame();
+            if (frame) {
+                frame.panel(frame.panelIndex(this));
+                this._startWidgets();
+                this.onShow();
+            }
+        },
+        /**
+         * Helper to return parent splitter
+         * @returns {*}
+         */
+        getSplitter:function(){
+            return this._parentByClass('Splitter');
+        },
+        /**
+         * Helper to return parent frame
+         * @returns {*}
+         */
+        getFrame:function(){
+            return this._parentByClass('Frame');
+        },
+        /**
+         * Std API
+         */
+        resize: function () {
+            this.__update();
+            this.__trigger(wcDocker.EVENT.RESIZED);
+        },
 
         /**
          * @memberOf module:wcPanel
@@ -41,6 +73,7 @@ define([
             this._parent = parent;
             this.$icon = null;
             this.$title = null;
+            this.$closeIcon = null;
             this.$titleText = null;
             this.$loading = null;
 
@@ -146,6 +179,21 @@ define([
 
                 if (this.$icon) {
                     this.$titleText.prepend(this.$icon);
+                }
+                if (this._closeable)
+                {
+                    if (this.$closeIcon) {
+                        this.$titleText.append(this.$closeIcon);
+                        this.$closeIcon[0].__panel= this;
+                    }
+                    else
+                    {
+                        this.$closeIcon = $('<div class="wcPanelCloseIcon fa fa-close"/>');
+                        this.$titleText.append(this.$closeIcon);
+                        this.$closeIcon[0].__panel= this;
+
+                    }
+
                 }
 
                 if (this._parent && this._parent.instanceOf('wcFrame')) {
@@ -472,6 +520,8 @@ define([
             if (this._parent && this._parent.instanceOf('wcFrame')) {
                 this._parent.__updateTabs();
             }
+
+            this._icon = icon;
         },
 
         /**
@@ -626,7 +676,17 @@ define([
          */
         closeable: function (enabled) {
             if (typeof enabled !== 'undefined') {
-                this._closeable = enabled ? true : false;
+                this._closeable = !!enabled;
+                if (this._closeable) {
+                    if(!this.$closeIcon) {
+                        this.$closeIcon = $('<div class="wcPanelCloseIcon fa fa-close"/>');
+                        this.$titleText.append(this.$closeIcon);
+                    }
+                }else{
+                    this.$closeIcon && this.$closeIcon.remove();
+                    this.$closeIcon = null;
+                }
+
                 if (this._parent) {
                     this._parent.__update();
                 }
@@ -634,6 +694,7 @@ define([
 
             return this._closeable;
         },
+
 
         /**
          * Forces the window to close.
@@ -790,12 +851,9 @@ define([
             var layoutClass = (this._options && this._options.layout) || 'wcLayoutTable';
             this._layout = new (this.docker().__getClass(layoutClass))(this.$container, this);
             this.$title = $('<div class="wcPanelTab">');
-            this.$titleText = $('<div>' + this._title + '</div>');
+            this.$titleText = $('<div></div>');
             this.$title.append(this.$titleText);
-
-            if (this._options.hasOwnProperty('title')) {
-                this.title(this._options.title);
-            }
+            this.title(this._options.hasOwnProperty('title') ? this._options.title : this._title);
 
             if (this._options.icon) {
                 this.icon(this._options.icon);
@@ -825,7 +883,7 @@ define([
                 this._initialized = true;
                 var self = this;
                 setTimeout(function () {
-                    self.__trigger(wcDocker.EVENT.INIT);
+                    self.__trigger.call(self,wcDocker.EVENT.INIT);
 
                     docker.__testLoadFinished();
                 }, 0);
@@ -943,7 +1001,8 @@ define([
         // Params:
         //    eventType     The event to trigger.
         //    data          A custom data object to pass into all handlers.
-        __trigger: function (eventType, data) {
+        //    docker        [optional] Explicitly specify Docker instance
+        __trigger: function (eventType, data,docker) {
             if (!eventType) {
                 return false;
             }
@@ -957,6 +1016,11 @@ define([
                 }
             }
 
+            // Trigger event in parent docker instance so we can just have one global listener
+            if (!docker) docker = this.docker();
+            if (docker)
+                docker.__trigger(eventType,data,this);
+            
             return results;
         },
 
@@ -984,9 +1048,7 @@ define([
             if (typeof $container === 'undefined') {
                 return this.$container;
             }
-
             this.$container = $container;
-
             if (this.$container) {
                 this._layout.__container(this.$container);
                 if (this.$loading) {
@@ -995,6 +1057,9 @@ define([
             } else {
                 this._layout.__container(null);
                 this.finishLoading();
+            }
+            if(this.$container) {
+                this.$container[0].id = this.id;
             }
             return this.$container;
         },
