@@ -3919,7 +3919,7 @@ define('wcDocker/frame',[
 
                     for (var i = 0; i < panel._buttonList.length; ++i) {
                         var buttonData = panel._buttonList[i];
-                        var $button = $('<div>');
+                        var $button = $(document.createElement('div'));
                         var buttonClass = buttonData.className;
                         $button.addClass('wcFrameButton');
                         if (buttonData.isTogglable) {
@@ -3934,7 +3934,9 @@ define('wcDocker/frame',[
                         $button.data('name', buttonData.name);
                         $button.text(buttonData.text);
                         if (buttonClass) {
-                            $button.prepend($('<div class="' + buttonClass + '">'));
+                            var wrapper = document.createElement('div');
+                            wrapper.className = buttonClass;
+                            $button.prepend($(wrapper));
                         }
 
                         this._buttonList.push($button);
