@@ -2138,7 +2138,6 @@ define('wcDocker/ghost',[
                 opacity: opacity,
                 'margin-left': '2px',
                 'margin-top': '2px',
-                border: '0px',
                 left: anchor.x + 'px',
                 top: anchor.y + 'px',
                 width: anchor.w + 'px',
