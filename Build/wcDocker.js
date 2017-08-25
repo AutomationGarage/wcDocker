@@ -2122,7 +2122,7 @@ define('wcDocker/ghost',[
                     'margin-top': this._rect.y - 10 + 'px',
                     width: this._rect.w + 'px',
                     height: this._rect.h + 'px'
-                }, 150);
+                }, 75);
                 return;
             }
 
@@ -2143,7 +2143,7 @@ define('wcDocker/ghost',[
                 top: anchor.y + 'px',
                 width: anchor.w + 'px',
                 height: anchor.h + 'px'
-            }, 150);
+            }, 75);
         },
 
         /**
@@ -2225,7 +2225,7 @@ define('wcDocker/ghost',[
             this.$ghost.stop().animate({
                 opacity: 0.0
             }, {
-                duration: 175,
+                duration: 100,
                 complete: function () {
                     $(this).remove();
                 }
