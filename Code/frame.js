@@ -907,22 +907,24 @@ define([
 
                     for (var i = 0; i < panel._buttonList.length; ++i) {
                         var buttonData = panel._buttonList[i];
-                        var $button = $('<div>');
-                        var buttonClass = buttonData.className;
-                        $button.addClass('wcFrameButton');
+                        var $button = $(document.createElement('div'));
+                        var customButtonClass = buttonData.className;
+                        var buttonClassName = 'wcFrameButton';
                         if (buttonData.isTogglable) {
-                            $button.addClass('wcFrameButtonToggler');
-
+                            buttonClassName += ' wcFrameButtonToggler';
                             if (buttonData.isToggled) {
-                                $button.addClass('wcFrameButtonToggled');
-                                buttonClass = buttonData.toggleClassName || buttonClass;
+                                buttonClassName += ' wcFrameButtonToggled';
+                                customButtonClass = buttonData.toggleClassName || customButtonClass;
                             }
                         }
+                        $button.attr('class', buttonClassName);
                         $button.attr('title', buttonData.tip);
                         $button.data('name', buttonData.name);
                         $button.text(buttonData.text);
-                        if (buttonClass) {
-                            $button.prepend($('<div class="' + buttonClass + '">'));
+                        if (customButtonClass) {
+                            var wrapper = document.createElement('div');
+                            wrapper.className = customButtonClass;
+                            $button.prepend($(wrapper));
                         }
 
                         this._buttonList.push($button);
@@ -939,16 +941,16 @@ define([
                 }
 
                 if (this._titleVisible) {
-                    this.$buttonBar.css('right', '');
+                    this.$buttonBar[0].style.right = '';
                     switch (this._tabOrientation) {
                         case wcDocker.TAB.RIGHT:
-                            this.$buttonBar.css('right', this.$tabBar.height());
-                        case wcDocker.TAB.LEFT:
-                            this.$tabBar.css('width', this.$center.height() + this.$tabBar.height());
+                            this.$buttonBar[0].style.right = this.$tabBar.height();
                             break;
-                        case wcDocker.TAB.TOP:
+                        case wcDocker.TAB.LEFT:
+                            this.$buttonBar[0].style.width = this.$center.height() + this.$tabBar.height();
+                            break;
                         case wcDocker.TAB.BOTTOM:
-                            this.$tabBar.css('width', this.$center.width());
+                            this.$buttonBar[0].style.width = this.$center.width();
                             break;
                         default:
                             break;
