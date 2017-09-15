@@ -911,43 +911,20 @@ define('wcDocker/types',[], function () {
 });
 /** @module wcBase */
 define('wcDocker/base',[
-    "dcl/dcl",
-], function (dcl) {
+    "dcl/dcl"
+], function(dcl) {
     /**
      * Base class for all docker classes
      * @class module:wcBase
      */
     return dcl(null, {
-        _saveProp: function (what, args) {
-            var who = this;
-            who['__' + what] = _.isFunction(who[what]) ? who[what]() : who[what];
-            args && who[what]!=null && who[what].apply && who[what].apply(who, args);
-        },
-        _restoreProp: function (what, call) {
-
-            var who = this;
-
-            //this prop also exists
-            if (who['_' + what]) {
-                who['_' + what] = who['__' + what];
-            }
-            var _args = who['__' + what];
-            if (call !== false) {
-                return _.isFunction(who[what]) ? who[what].apply(who, [_args]) : who[what];
-            } else {
-                return _args;
-            }
-        },
-        debounce: function (methodName, _function, delay, options, now) {
-            // return debounce(this, methodName, _function, delay, options, now);
-        },
         /**
          * Returns this or the docker's options
          * @TODO: better looking through the parents?
          * @function module:wcBase#getOptions
          * @returns {Object|null}
          */
-        getOptions: function () {
+        getOptions: function() {
             return this._options || this.docker()._options || {};
         },
 
@@ -963,53 +940,39 @@ define('wcDocker/base',[
         },
 
         /**
-         * Return a module (dcl) by class name.
-         * @param name {string} the class name, for instance "wcPanel", "wcSplitter" and so forth. Please see in wcDocker#defaultClasses for available class names.
-         * @returns {object} the dcl module found in options
-         * @private
-         */
-        __getClass: function (name) {
-            return this.getOptions()[name + 'Class'];
-        },
-
-        /**
          * Class eq function
          * @function module:wcBase#instanceOf
          * @param {string} what
          * @param {object} [who]
          * @returns {boolean}
          */
-        instanceOf: function (what, who) {
+        instanceOf: function(what, who) {
             who = who || this;
-            return !!(who && (who.declaredClass.indexOf(what) != -1));
+            return !!(who && (who.declaredClass.indexOf(what)!=-1));
         },
+
         /**
          * Retrieves the main [docker]{@link module:wcDocker} instance.
          * @function module:wcBase#docker
          * @returns {module:wcDocker} - The top level docker object.
          */
-        docker: function (startNode) {
+        docker: function(startNode) {
             var parent = startNode || this._parent;
             while (parent && !(parent.instanceOf('wcDocker'))) {
                 parent = parent._parent;
             }
             return parent;
         },
+
         /**
-         * Search upwards for a parent by class string or module
-         * @todo get rid of declared class in xDocker
-         * @param className {string|Object}
-         * @returns {*}
+         * Return a module (dcl) by class name.
+         * @function module:wcBase#__getClass
+         * @param name {string} the class name, for instance "wcPanel", "wcSplitter" and so forth. Please see in wcDocker#defaultClasses for available class names.
+         * @returns {object} the dcl module found in options
          * @private
          */
-        _parentByClass: function(className) {
-            var parent = this._parent;
-            if(_.isString(className)) {
-                while (parent && !(parent.declaredClass.indexOf(className)!==-1)) {
-                    parent = parent._parent;
-                }
-            }
-            return parent;
+        __getClass: function(name) {
+            return this.getOptions()[name+'Class'];
         }
     });
 });
@@ -1028,38 +991,6 @@ define('wcDocker/panel',[
      */
     var Module = dcl(base, {
         declaredClass: 'wcPanel',
-        /**
-         * Std API
-         */
-        select:function(){
-            var frame = this.getFrame();
-            if (frame) {
-                frame.panel(frame.panelIndex(this));
-                this._startWidgets();
-                this.onShow();
-            }
-        },
-        /**
-         * Helper to return parent splitter
-         * @returns {*}
-         */
-        getSplitter:function(){
-            return this._parentByClass('Splitter');
-        },
-        /**
-         * Helper to return parent frame
-         * @returns {*}
-         */
-        getFrame:function(){
-            return this._parentByClass('Frame');
-        },
-        /**
-         * Std API
-         */
-        resize: function () {
-            this.__update();
-            this.__trigger(wcDocker.EVENT.RESIZED);
-        },
 
         /**
          * @memberOf module:wcPanel
@@ -1089,7 +1020,6 @@ define('wcDocker/panel',[
             this._parent = parent;
             this.$icon = null;
             this.$title = null;
-            this.$closeIcon = null;
             this.$titleText = null;
             this.$loading = null;
 
@@ -1195,21 +1125,6 @@ define('wcDocker/panel',[
 
                 if (this.$icon) {
                     this.$titleText.prepend(this.$icon);
-                }
-                if (this._closeable)
-                {
-                    if (this.$closeIcon) {
-                        this.$titleText.append(this.$closeIcon);
-                        this.$closeIcon[0].__panel= this;
-                    }
-                    else
-                    {
-                        this.$closeIcon = $('<div class="wcPanelCloseIcon fa fa-close"/>');
-                        this.$titleText.append(this.$closeIcon);
-                        this.$closeIcon[0].__panel= this;
-
-                    }
-
                 }
 
                 if (this._parent && this._parent.instanceOf('wcFrame')) {
@@ -1536,8 +1451,6 @@ define('wcDocker/panel',[
             if (this._parent && this._parent.instanceOf('wcFrame')) {
                 this._parent.__updateTabs();
             }
-
-            this._icon = icon;
         },
 
         /**
@@ -1692,17 +1605,7 @@ define('wcDocker/panel',[
          */
         closeable: function (enabled) {
             if (typeof enabled !== 'undefined') {
-                this._closeable = !!enabled;
-                if (this._closeable) {
-                    if(!this.$closeIcon) {
-                        this.$closeIcon = $('<div class="wcPanelCloseIcon fa fa-close"/>');
-                        this.$titleText.append(this.$closeIcon);
-                    }
-                }else{
-                    this.$closeIcon && this.$closeIcon.remove();
-                    this.$closeIcon = null;
-                }
-
+                this._closeable = enabled ? true : false;
                 if (this._parent) {
                     this._parent.__update();
                 }
@@ -1710,7 +1613,6 @@ define('wcDocker/panel',[
 
             return this._closeable;
         },
-
 
         /**
          * Forces the window to close.
@@ -1867,9 +1769,12 @@ define('wcDocker/panel',[
             var layoutClass = (this._options && this._options.layout) || 'wcLayoutTable';
             this._layout = new (this.docker().__getClass(layoutClass))(this.$container, this);
             this.$title = $('<div class="wcPanelTab">');
-            this.$titleText = $('<div></div>');
+            this.$titleText = $('<div>' + this._title + '</div>');
             this.$title.append(this.$titleText);
-            this.title(this._options.hasOwnProperty('title') ? this._options.title : this._title);
+
+            if (this._options.hasOwnProperty('title')) {
+                this.title(this._options.title);
+            }
 
             if (this._options.icon) {
                 this.icon(this._options.icon);
@@ -1899,7 +1804,7 @@ define('wcDocker/panel',[
                 this._initialized = true;
                 var self = this;
                 setTimeout(function () {
-                    self.__trigger.call(self,wcDocker.EVENT.INIT);
+                    self.__trigger(wcDocker.EVENT.INIT);
 
                     docker.__testLoadFinished();
                 }, 0);
@@ -2017,8 +1922,7 @@ define('wcDocker/panel',[
         // Params:
         //    eventType     The event to trigger.
         //    data          A custom data object to pass into all handlers.
-        //    docker        [optional] Explicitly specify Docker instance
-        __trigger: function (eventType, data,docker) {
+        __trigger: function (eventType, data) {
             if (!eventType) {
                 return false;
             }
@@ -2032,11 +1936,6 @@ define('wcDocker/panel',[
                 }
             }
 
-            // Trigger event in parent docker instance so we can just have one global listener
-            if (!docker) docker = this.docker();
-            if (docker)
-                docker.__trigger(eventType,data,this);
-            
             return results;
         },
 
@@ -2064,7 +1963,9 @@ define('wcDocker/panel',[
             if (typeof $container === 'undefined') {
                 return this.$container;
             }
+
             this.$container = $container;
+
             if (this.$container) {
                 this._layout.__container(this.$container);
                 if (this.$loading) {
@@ -2073,9 +1974,6 @@ define('wcDocker/panel',[
             } else {
                 this._layout.__container(null);
                 this.finishLoading();
-            }
-            if(this.$container) {
-                this.$container[0].id = this.id;
             }
             return this.$container;
         },
@@ -3406,10 +3304,6 @@ define('wcDocker/frame',[
          */
         panel: function (tabIndex, autoFocus) {
             if (typeof tabIndex !== 'undefined') {
-
-                if (tabIndex == this._curTab)
-                    return this._panelList[this._curTab];
-
                 if (this.isCollapser() && tabIndex === this._curTab) {
                     this.collapse();
                     tabIndex = -1;
@@ -3426,7 +3320,7 @@ define('wcDocker/frame',[
                         this.$center.children('.wcPanelTabContent[id="' + tabIndex + '"]').removeClass('wcPanelTabContentHidden');
                         this.expand();
                     }
-                    this.__updateTabs(autoFocus,'panelchange');
+                    this.__updateTabs(autoFocus);
                 }
             }
 
@@ -3579,15 +3473,15 @@ define('wcDocker/frame',[
                 this._resizeData.time = new Date();
                 if (!this._resizeData.timeout) {
                     this._resizeData.timeout = true;
-                    setTimeout(this.__resizeEnd.bind(this,'update'), this._resizeData.delta);
+                    setTimeout(this.__resizeEnd.bind(this), this._resizeData.delta);
                 }
             }
             // this.__updateTabs();
             this.__onTabChange();
         },
 
-        __resizeEnd: function (trigger) {
-            this.__updateTabs(undefined,trigger || 'resize');
+        __resizeEnd: function () {
+            this.__updateTabs();
             if (new Date() - this._resizeData.time < this._resizeData.delta) {
                 setTimeout(this.__resizeEnd.bind(this), this._resizeData.delta);
             } else {
@@ -3651,11 +3545,7 @@ define('wcDocker/frame',[
             }
         },
 
-        __updateTabs: function (autoFocus,reason) {
-
-            // TODO: Handle reason='panelchange' || reason == 'resize' to prevent un-necessary rebuild of everything
-            // and prevent iframe/webview from being re-rendered
-
+        __updateTabs: function (autoFocus) {
             this.$tabScroll.empty();
 
             var getOffset = function ($item) {
@@ -3713,16 +3603,14 @@ define('wcDocker/frame',[
                     this._titleVisible = false;
                 }
 
-                var $tabContent = this.$center.children('.wcPanelTabContent[id="' + panel.id + '"]');
-                var foundTabContent = !!$tabContent.length;
-                if (!foundTabContent) {
+                var $tabContent = this.$center.children('.wcPanelTabContent[id="' + i + '"]');
+                if (!$tabContent.length) {
                     $tabContent = $('<div class="wcPanelTabContent wcPanelTabContentHidden" id="' + i + '">');
                     this.$center.append($tabContent);
                 }
-                if (!foundTabContent) {
-                    panel.__container($tabContent);
-                    panel._parent = this;
-                }
+
+                panel.__container($tabContent);
+                panel._parent = this;
 
                 var isVisible = this._curTab === i;
                 if (panel.isVisible() !== isVisible) {
@@ -19232,10 +19120,9 @@ define('wcDocker/docker',[
          * @param {module:wcDocker.DOCK} location - The docking location to place this panel.
          * @param {module:wcPanel|module:wcDocker.COLLAPSED} [targetPanel] - A target panel to dock relative to, or use {@link wcDocker.COLLAPSED} to collapse it to the side or bottom.
          * @param {module:wcDocker~PanelOptions} [options] - Other options for panel placement.
-         * @param {Object} [data] - Data to pass to onCreate
          * @returns {module:wcPanel|Boolean} - The newly created panel object, or false if no panel was created.
          */
-        addPanel: function (typeName, location, targetPanel, options,data) {
+        addPanel: function (typeName, location, targetPanel, options) {
             function __addPanel(panel) {
                 if (location === wcDocker.DOCK.STACKED) {
                     this.__addPanelGrouped(panel, targetPanel, options);
@@ -19271,7 +19158,7 @@ define('wcDocker/docker',[
                     var panel = new (this.__getClass('wcPanel'))(this, typeName, panelType.options);
                     panel.__container(this.$transition);
                     var panelOptions = (panelType.options && panelType.options.options) || {};
-                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions,data);
+                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions);
 
                     __addPanel.call(this, panel);
                     return panel;
@@ -20222,10 +20109,7 @@ define('wcDocker/docker',[
                 this.menu('.wcFrame', [], true);
             }
 
-            /*
-            if (this._options.theme)
-                this.theme(this._options.theme);
-            */
+            this.theme(this._options.theme);
 
             // Set up our responsive updater.
             this._updateId = setInterval(function () {
@@ -20318,10 +20202,6 @@ define('wcDocker/docker',[
                     for (var i = 0; i < self._frameList.length; ++i) {
                         self._frameList[i].__shadow(false);
                     }
-                }
-
-                if(self._draggingFrameSizer){
-                    self.trigger(wcDocker.EVENT.END_FLOAT_RESIZE);
                 }
 
                 if (self._ghost && (self._draggingFrame || self._creatingPanel)) {
@@ -20540,9 +20420,6 @@ define('wcDocker/docker',[
                 } else if (self._draggingFrame && !self._draggingFrameTab) {
                     self._draggingFrame.__move(mouse);
                     self._draggingFrame.__update();
-                    if(self._draggingFrameSizer){
-                        self.trigger(wcDocker.EVENT.END_FLOAT_RESIZE);
-                    }
                 }
                 return true;
             }
@@ -20767,10 +20644,6 @@ define('wcDocker/docker',[
                     return true;
                 }
 
-                if ($(event.target).hasClass('wcPanelCloseIcon')) {
-                    return self.__closePanel(event.target.__panel);
-                }
-
                 lastLButtonDown = new Date().getTime();
 
                 $('body').addClass('wcDisableSelection');
@@ -20833,8 +20706,6 @@ define('wcDocker/docker',[
                 }
                 if (self._draggingFrame) {
                     self.__focus(self._draggingFrame);
-                    //extra
-                    var focusFrame = self._focusFrame;
                 }
                 return true;
             }
@@ -20902,10 +20773,6 @@ define('wcDocker/docker',[
                 }
                 if (self._draggingFrame) {
                     self.__focus(self._draggingFrame);
-                }
-
-                if(self._draggingFrameSizer){
-                    self.trigger(wcDocker.EVENT.BEGIN_FLOAT_RESIZE);
                 }
                 return true;
             }
@@ -21284,8 +21151,7 @@ define('wcDocker/docker',[
         // Params:
         //    eventName   The name of the event.
         //    data        A custom data parameter to pass to all handlers.
-        //    panel       [optional] The panel associated with the event
-        __trigger: function (eventName, data, panel) {
+        __trigger: function (eventName, data) {
             if (!eventName) {
                 return;
             }
@@ -21295,7 +21161,7 @@ define('wcDocker/docker',[
             if (this._events[eventName]) {
                 var events = this._events[eventName].slice(0);
                 for (var i = 0; i < events.length; ++i) {
-                    results.push(events[i].call(this, data,panel));
+                    results.push(events[i].call(this, data));
                 }
             }
 

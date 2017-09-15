@@ -284,10 +284,6 @@ define([
          */
         panel: function (tabIndex, autoFocus) {
             if (typeof tabIndex !== 'undefined') {
-
-                if (tabIndex == this._curTab)
-                    return this._panelList[this._curTab];
-
                 if (this.isCollapser() && tabIndex === this._curTab) {
                     this.collapse();
                     tabIndex = -1;
@@ -304,7 +300,7 @@ define([
                         this.$center.children('.wcPanelTabContent[id="' + tabIndex + '"]').removeClass('wcPanelTabContentHidden');
                         this.expand();
                     }
-                    this.__updateTabs(autoFocus,'panelchange');
+                    this.__updateTabs(autoFocus);
                 }
             }
 
@@ -457,15 +453,15 @@ define([
                 this._resizeData.time = new Date();
                 if (!this._resizeData.timeout) {
                     this._resizeData.timeout = true;
-                    setTimeout(this.__resizeEnd.bind(this,'update'), this._resizeData.delta);
+                    setTimeout(this.__resizeEnd.bind(this), this._resizeData.delta);
                 }
             }
             // this.__updateTabs();
             this.__onTabChange();
         },
 
-        __resizeEnd: function (trigger) {
-            this.__updateTabs(undefined,trigger || 'resize');
+        __resizeEnd: function () {
+            this.__updateTabs();
             if (new Date() - this._resizeData.time < this._resizeData.delta) {
                 setTimeout(this.__resizeEnd.bind(this), this._resizeData.delta);
             } else {
@@ -529,11 +525,7 @@ define([
             }
         },
 
-        __updateTabs: function (autoFocus,reason) {
-
-            // TODO: Handle reason='panelchange' || reason == 'resize' to prevent un-necessary rebuild of everything
-            // and prevent iframe/webview from being re-rendered
-
+        __updateTabs: function (autoFocus) {
             this.$tabScroll.empty();
 
             var getOffset = function ($item) {
@@ -591,16 +583,14 @@ define([
                     this._titleVisible = false;
                 }
 
-                var $tabContent = this.$center.children('.wcPanelTabContent[id="' + panel.id + '"]');
-                var foundTabContent = !!$tabContent.length;
-                if (!foundTabContent) {
+                var $tabContent = this.$center.children('.wcPanelTabContent[id="' + i + '"]');
+                if (!$tabContent.length) {
                     $tabContent = $('<div class="wcPanelTabContent wcPanelTabContentHidden" id="' + i + '">');
                     this.$center.append($tabContent);
                 }
-                if (!foundTabContent) {
-                    panel.__container($tabContent);
-                    panel._parent = this;
-                }
+
+                panel.__container($tabContent);
+                panel._parent = this;
 
                 var isVisible = this._curTab === i;
                 if (panel.isVisible() !== isVisible) {
