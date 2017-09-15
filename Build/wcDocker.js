@@ -19891,7 +19891,7 @@ define('wcDocker/docker',[
                                     }
                                 }
                             }
-                            if (!myFrame._isFloating) {
+                            if (!myFrame._isFloating && myFrame.panel().detachable()) {
                                 items['Detach Panel'] = {
                                     name: 'Detach Panel',
                                     faicon: 'level-up',
@@ -19931,7 +19931,7 @@ define('wcDocker/docker',[
                                         }
                                     }
                                 }
-                                if (!myFrame._isFloating) {
+                                if (!myFrame._isFloating && myFrame.panel().detachable()) {
                                     items['Detach Panel'] = {
                                         name: 'Detach Panel',
                                         faicon: 'level-up',
