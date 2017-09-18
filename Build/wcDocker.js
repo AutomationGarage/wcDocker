@@ -21605,7 +21605,7 @@ define('wcDocker/docker',[
                 myPanel.title(false);
                 myPanel.closeable(false);
                 if (placeholderHtml) {
-                    myPanel.layout().addItem($('<div style="text-align: center;">'+ placeholderhtml +'</div>'));
+                    myPanel.layout().addItem($('<div style="text-align: center;">'+ placeholderHtml +'</div>'));
                 }
             }(this._placeholderPanel);
 
