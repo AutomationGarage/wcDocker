@@ -19206,7 +19206,7 @@ define('wcDocker/docker',[
                     // If this is the last frame, create a dummy panel to take up
                     // the space until another one is created.
                     if (lastPanel) {
-                        this.__addPlaceholder(parentFrame);
+                        this.__addPlaceholder(parentFrame, this._options.placeholderHtml);
 
                         if (!dontDestroy) {
                             panel.__destroy();
@@ -19351,7 +19351,7 @@ define('wcDocker/docker',[
                     // If this is the last frame, create a dummy panel to take up
                     // the space until another one is created.
                     if (lastPanel) {
-                        this.__addPlaceholder(parentFrame);
+                        this.__addPlaceholder(parentFrame, this._options.placeholderHtml);
                     } else {
                         var index = this._floatingList.indexOf(parentFrame);
                         if (index !== -1) {
