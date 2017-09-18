@@ -20102,7 +20102,7 @@ define('wcDocker/docker',[
             this.__compatibilityCheck();
 
             this._root = null;
-            this.__addPlaceholder();
+            this.__addPlaceholder(null, this._options.placeholderHtml);
 
             // Setup our context menus.
             if (this._options.allowContextMenu) {
@@ -21593,7 +21593,7 @@ define('wcDocker/docker',[
         },
 
         // Adds the placeholder panel as needed
-        __addPlaceholder: function (targetPanel) {
+        __addPlaceholder: function (targetPanel, placeholderHtml) {
             if (this._placeholderPanel) {
                 console.log('WARNING: wcDocker creating placeholder panel when one already exists');
             }
@@ -21604,6 +21604,9 @@ define('wcDocker/docker',[
             this._placeholderPanel._panelObject = new function (myPanel) {
                 myPanel.title(false);
                 myPanel.closeable(false);
+                if (placeholderHtml) {
+                    myPanel.layout().addItem($('<div style="text-align: center;">'+ placeholderhtml +'</div>'));
+                }
             }(this._placeholderPanel);
 
             if (targetPanel) {
