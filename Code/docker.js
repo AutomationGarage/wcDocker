@@ -1953,7 +1953,7 @@ define([
                     return true;
                 }
 
-                self.__timeout = setTimeout(() => {
+                self.__timeout = setTimeout(function() {
                     self.__timeout = null;
                     var panelType = $(this).data('panel');
                     var info = self.panelTypeInfo(panelType);
@@ -1973,7 +1973,7 @@ define([
                         self.__focus();
                         self.trigger(wcDocker.EVENT.BEGIN_DOCK);
                     }
-                }, 200);
+                }.bind(this), 200);
             }
 
             function __onMouseUpCancelCreatePanel(event) {

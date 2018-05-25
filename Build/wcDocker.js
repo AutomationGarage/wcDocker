@@ -20808,7 +20808,7 @@ define('wcDocker/docker',[
                         self.__focus();
                         self.trigger(wcDocker.EVENT.BEGIN_DOCK);
                     }
-                }, 200);
+                }.bind(this), 200);
             }
 
             function __onMouseUpCancelCreatePanel(event) {
