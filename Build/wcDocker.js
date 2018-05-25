@@ -20172,6 +20172,9 @@ define('wcDocker/docker',[
             // Create new panels.
             $('body').on('mousedown', '.wcCreatePanel', __onMouseDownCreatePanel);
             $('body').on('touchstart', '.wcCreatePanel', __onMouseDownCreatePanel);
+            // Cancell panel creation.
+            $('body').on('mouseup', '.wcCreatePanel', __onMouseUpCancelCreatePanel);
+            $('body').on('touchend', '.wcCreatePanel', __onMouseUpCancelCreatePanel);
             // Mouse released
             $('body').on('mouseup', __onMouseUp);
             $('body').on('touchend', __onMouseUp);
@@ -20785,24 +20788,35 @@ define('wcDocker/docker',[
                     return true;
                 }
 
-                var panelType = $(this).data('panel');
-                var info = self.panelTypeInfo(panelType);
-                if (info) {
-                    var rect = {
-                        x: mouse.x - 250,
-                        y: mouse.y,
-                        w: 500,
-                        h: 500
-                    };
-                    $('body').addClass('wcDisableSelection');
-                    self._ghost = new (self.__getClass('wcGhost'))(rect, mouse, self);
-                    self._ghost.update(mouse);
-                    self._ghost.anchor(mouse, self._ghost.anchor());
-                    self._creatingPanel = panelType;
-                    self._creatingPanelNoFloating = !$(this).data('nofloating');
-                    self.__focus();
-                    self.trigger(wcDocker.EVENT.BEGIN_DOCK);
+                self.__timeout = setTimeout(function() {
+                    self.__timeout = null;
+                    var panelType = $(this).data('panel');
+                    var info = self.panelTypeInfo(panelType);
+                    if (info) {
+                        var rect = {
+                            x: mouse.x - 250,
+                            y: mouse.y,
+                            w: 500,
+                            h: 500
+                        };
+                        $('body').addClass('wcDisableSelection');
+                        self._ghost = new (self.__getClass('wcGhost'))(rect, mouse, self);
+                        self._ghost.update(mouse);
+                        self._ghost.anchor(mouse, self._ghost.anchor());
+                        self._creatingPanel = panelType;
+                        self._creatingPanelNoFloating = !$(this).data('nofloating');
+                        self.__focus();
+                        self.trigger(wcDocker.EVENT.BEGIN_DOCK);
+                    }
+                }, 200);
+            }
+
+            function __onMouseUpCancelCreatePanel(event) {
+                if (self.__timeout) {
+                    clearTimeout(self.__timeout);
+                    self.__timeout = null;
                 }
+                return true;
             }
 
             // on mousedown for .wcPanelTab
