@@ -1953,7 +1953,7 @@ define([
                     return true;
                 }
 
-                self.__timeout = setTimeout(function() {
+                self.__timeout = setTimeout(() => {
                     self.__timeout = null;
                     var panelType = $(this).data('panel');
                     var info = self.panelTypeInfo(panelType);
