@@ -3406,14 +3406,14 @@ define('wcDocker/frame',[
             this.$frame.append(this.$center);
 
             if (this._isFloating) {
-                this.$top = $('<div class="wcFrameEdgeH wcFrameEdge"></div>').css('top', '-6px').css('left', '0px').css('right', '0px');
-                this.$bottom = $('<div class="wcFrameEdgeH wcFrameEdge"></div>').css('bottom', '-6px').css('left', '0px').css('right', '0px');
-                this.$left = $('<div class="wcFrameEdgeV wcFrameEdge"></div>').css('left', '-6px').css('top', '0px').css('bottom', '0px');
-                this.$right = $('<div class="wcFrameEdgeV wcFrameEdge"></div>').css('right', '-6px').css('top', '0px').css('bottom', '0px');
-                this.$corner1 = $('<div class="wcFrameCornerNW wcFrameEdge"></div>').css('top', '-6px').css('left', '-6px');
-                this.$corner2 = $('<div class="wcFrameCornerNE wcFrameEdge"></div>').css('top', '-6px').css('right', '-6px');
-                this.$corner3 = $('<div class="wcFrameCornerNW wcFrameEdge"></div>').css('bottom', '-6px').css('right', '-6px');
-                this.$corner4 = $('<div class="wcFrameCornerNE wcFrameEdge"></div>').css('bottom', '-6px').css('left', '-6px');
+                this.$top = $('<div class="wcFrameEdgeH wcFrameEdge"></div>').css('top', '0px').css('left', '0px').css('right', '0px');
+                this.$bottom = $('<div class="wcFrameEdgeH wcFrameEdge"></div>').css('bottom', '0px').css('left', '0px').css('right', '0px');
+                this.$left = $('<div class="wcFrameEdgeV wcFrameEdge"></div>').css('left', '0px').css('top', '0px').css('bottom', '0px');
+                this.$right = $('<div class="wcFrameEdgeV wcFrameEdge"></div>').css('right', '0px').css('top', '0px').css('bottom', '0px');
+                this.$corner1 = $('<div class="wcFrameCornerNW wcFrameEdge"></div>').css('top', '0px').css('left', '0px');
+                this.$corner2 = $('<div class="wcFrameCornerNE wcFrameEdge"></div>').css('top', '0px').css('right', '0px');
+                this.$corner3 = $('<div class="wcFrameCornerNW wcFrameEdge"></div>').css('bottom', '0px').css('right', '0px');
+                this.$corner4 = $('<div class="wcFrameCornerNE wcFrameEdge"></div>').css('bottom', '0px').css('left', '0px');
 
                 this.$frame.append(this.$top);
                 this.$frame.append(this.$bottom);
@@ -19122,7 +19122,7 @@ define('wcDocker/docker',[
          * @param {module:wcDocker~PanelOptions} [options] - Other options for panel placement.
          * @returns {module:wcPanel|Boolean} - The newly created panel object, or false if no panel was created.
          */
-        addPanel: function (typeName, location, targetPanel, options) {
+        addPanel: function (typeName, location, targetPanel, options, arg) {
             function __addPanel(panel) {
                 if (location === wcDocker.DOCK.STACKED) {
                     this.__addPanelGrouped(panel, targetPanel, options);
@@ -19158,7 +19158,7 @@ define('wcDocker/docker',[
                     var panel = new (this.__getClass('wcPanel'))(this, typeName, panelType.options);
                     panel.__container(this.$transition);
                     var panelOptions = (panelType.options && panelType.options.options) || {};
-                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions);
+                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions, arg);
 
                     __addPanel.call(this, panel);
                     return panel;

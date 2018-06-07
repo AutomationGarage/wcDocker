@@ -287,7 +287,7 @@ define([
          * @param {module:wcDocker~PanelOptions} [options] - Other options for panel placement.
          * @returns {module:wcPanel|Boolean} - The newly created panel object, or false if no panel was created.
          */
-        addPanel: function (typeName, location, targetPanel, options) {
+        addPanel: function (typeName, location, targetPanel, options, arg) {
             function __addPanel(panel) {
                 if (location === wcDocker.DOCK.STACKED) {
                     this.__addPanelGrouped(panel, targetPanel, options);
@@ -323,7 +323,7 @@ define([
                     var panel = new (this.__getClass('wcPanel'))(this, typeName, panelType.options);
                     panel.__container(this.$transition);
                     var panelOptions = (panelType.options && panelType.options.options) || {};
-                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions);
+                    panel._panelObject = new panelType.options.onCreate(panel, panelOptions, arg);
 
                     __addPanel.call(this, panel);
                     return panel;
