@@ -545,7 +545,7 @@ define([
             var tabPositions = [];
             var totalWidth = 0;
             var parentLeft = getOffset(this.$tabScroll);
-            var showTabs = this._panelList.length > 1 || this._isFloating || this.isCollapser();
+            var showTabs = this._panelList.length > 1 || this.isCollapser();
             var self = this;
 
             if (this.isCollapser()) {
