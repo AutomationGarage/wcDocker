@@ -1948,6 +1948,11 @@ define([
 
             // on mousedown for .wcCreatePanel
             function __onMouseDownCreatePanel(event) {
+                if (event.stopPropagation) event.stopPropagation();
+                if (event.preventDefault) event.preventDefault();
+                event.cancelBubble = true;
+                event.returnValue = false;
+
                 var mouse = self.__mouse(event);
                 if (mouse.which !== 1) {
                     return true;
