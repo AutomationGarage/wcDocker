@@ -408,9 +408,9 @@ define([
             this.$center = $('<div class="wcFrameCenter wcPanelBackground">');
             this.$tabLeft = $('<div class="wcFrameButton" title="Scroll tabs to the left."><span class="fa fa-arrow-left"></span>&lt;</div>');
             this.$tabRight = $('<div class="wcFrameButton" title="Scroll tabs to the right."><span class="fa fa-arrow-right"></span>&gt;</div>');
-            this.$close = $('<div class="wcFrameButton" title="Close the currently active panel tab"><span class="fa fa-close"></span>X</div>');
+            this.$close = $('<div class="wcFrameButton" title="Remove panel"><span class="fa fa-close"></span>X</div>');
 
-            //this.$maximize = $('<div class="wcFrameButton" title="Close the currently active panel tab"><span class="fa fa-expand"></span>X</div>');
+            //this.$maximize = $('<div class="wcFrameButton" title="Remove panel"><span class="fa fa-expand"></span>X</div>');
             this.$buttonBar = $('<div class="wcFrameButtonBar">');
 
 
