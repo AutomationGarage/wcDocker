@@ -19778,7 +19778,7 @@ define('wcDocker/docker',[
                                     }
                                 }
                             }
-                            if (!myFrame._isFloating && myFrame.panel().detachable()) {
+                            if (!myFrame._isFloating && myFrame.panel().detachable() && !myFrame.panel()._isPlaceholder) {
                                 items['Detach Panel'] = {
                                     name: 'Detach Panel',
                                     faicon: 'level-up',
@@ -19797,11 +19797,13 @@ define('wcDocker/docker',[
                             };
                         } else {
                             if (myFrame) {
-                                items['Close Panel'] = {
-                                    name: 'Remove Panel',
-                                    faicon: 'close',
-                                    disabled: !myFrame.panel().closeable()
-                                };
+                                if (!myFrame.panel()._isPlaceholder) {
+                                    items['Close Panel'] = {
+                                        name: 'Remove Panel',
+                                        faicon: 'close',
+                                        disabled: !myFrame.panel().closeable()
+                                    };
+                                }
                                 if (self.isCollapseEnabled()) {
                                     if (!myFrame.isCollapser()) {
                                         items.fold1 = {
@@ -19818,7 +19820,7 @@ define('wcDocker/docker',[
                                         }
                                     }
                                 }
-                                if (!myFrame._isFloating && myFrame.panel().detachable()) {
+                                if (!myFrame._isFloating && myFrame.panel().detachable() && !myFrame.panel()._isPlaceholder) {
                                     items['Detach Panel'] = {
                                         name: 'Detach Panel',
                                         faicon: 'level-up',
