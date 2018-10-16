@@ -122,7 +122,8 @@ define([
                 edgeAnchorSize: 50,
                 panelAnchorSize: '15%',
                 detachToWidth: '50%',
-                detachToHeight: '50%'
+                detachToHeight: '50%',
+                allowTabs: true
             };
 
             this._options = {};

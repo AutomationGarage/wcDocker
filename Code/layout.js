@@ -129,7 +129,7 @@ define([
 
             // If the target panel has a title, hovering over it (on all sides) will cause stacking
             // and also change the orientation of the tabs (if enabled).
-            if (title) {
+            if (title && docker._options.allowTabs) {
                 // Top title bar
                 if ((!forceTabOrientation || forceTabOrientation === wcDocker.TAB.TOP) &&
                     mouse.y >= offset.top && mouse.y <= offset.top + titleSize &&
