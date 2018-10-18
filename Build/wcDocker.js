@@ -19779,7 +19779,7 @@ define('wcDocker/docker',[
                                     }
                                 }
                             }
-                            if (!myFrame._isFloating && myFrame.panel().detachable() && !myFrame.panel()._isPlaceholder) {
+                            if (!myFrame._isFloating && myFrame.panel().detachable() || !myFrame.panel()._isPlaceholder) {
                                 items['Detach Panel'] = {
                                     name: 'Detach Panel',
                                     faicon: 'level-up',
@@ -19821,7 +19821,7 @@ define('wcDocker/docker',[
                                         }
                                     }
                                 }
-                                if (!myFrame._isFloating && myFrame.panel().detachable() && !myFrame.panel()._isPlaceholder) {
+                                if (!myFrame._isFloating && myFrame.panel().detachable() || !myFrame.panel()._isPlaceholder) {
                                     items['Detach Panel'] = {
                                         name: 'Detach Panel',
                                         faicon: 'level-up',
@@ -20189,6 +20189,31 @@ define('wcDocker/docker',[
 
             // Escape key to cancel drag operations.
             $('body').on('keyup', __onKeyup);
+
+            $('body').on('touchstart', '.wcFrame', __onFrameTouchStart);
+            $('body').on('touchend', '.wcFrame', __onFrameTouchEnd);
+
+            function __onFrameTouchEnd(event) {
+                if (self._contextTimer) {
+                    clearTimeout(self._contextTimer);
+                    self._contextTimer = null;
+                }
+                return true;
+            }
+
+            function __onFrameTouchStart(event) {
+                if (event.target.classList.contains('wcTabScroller') || event.target.classList.contains('fa') || event.target.classList.contains('wcFrameButtonBar') || event.target.classList.contains('wcFrameTitle') ) { return true; }
+                if (event.stopPropagation) event.stopPropagation();
+                if (event.preventDefault) event.preventDefault();
+                event.cancelBubble = true;
+                event.returnValue = false;
+
+
+                self._contextTimer = setTimeout(function() {
+                    self._contextTimer = null;
+                    $(event.currentTarget).contextMenu({x: event.pageX, y: event.pageY});
+                }.bind(this), 500);
+            }
 
             // on mousedown
             function __onMouseDown(event) {
