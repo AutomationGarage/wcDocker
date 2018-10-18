@@ -944,7 +944,7 @@ define([
                                     }
                                 }
                             }
-                            if (!myFrame._isFloating && myFrame.panel().detachable() || !myFrame.panel()._isPlaceholder) {
+                            if (!myFrame._isFloating && myFrame.panel().detachable() && !myFrame.panel()._isPlaceholder) {
                                 items['Detach Panel'] = {
                                     name: 'Detach Panel',
                                     faicon: 'level-up',
@@ -986,7 +986,7 @@ define([
                                         }
                                     }
                                 }
-                                if (!myFrame._isFloating && myFrame.panel().detachable() || !myFrame.panel()._isPlaceholder) {
+                                if (!myFrame._isFloating && myFrame.panel().detachable() && !myFrame.panel()._isPlaceholder) {
                                     items['Detach Panel'] = {
                                         name: 'Detach Panel',
                                         faicon: 'level-up',
