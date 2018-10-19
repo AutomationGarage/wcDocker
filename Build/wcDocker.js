@@ -20204,11 +20204,11 @@ define('wcDocker/docker',[
             function __onFrameTouchStart(event) {
                 if (event.target.classList.contains('wcTabScroller') || event.target.classList.contains('fa') || event.target.classList.contains('wcFrameButtonBar') || event.target.classList.contains('wcFrameTitle') ) { return true; }
                 if (event.stopPropagation) event.stopPropagation();
-                if (event.preventDefault) event.preventDefault();
-                event.cancelBubble = true;
-                event.returnValue = false;
-
-
+                if (self._contextTimer) { 
+                    clearTimeout(self._contextTimer); 
+                    self._contextTimer = null;
+                }
+                
                 self._contextTimer = setTimeout(function() {
                     self._contextTimer = null;
                     $(event.currentTarget).contextMenu({x: event.pageX, y: event.pageY});
