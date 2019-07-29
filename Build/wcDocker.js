@@ -20019,6 +20019,16 @@ define('wcDocker/docker',[
                 if (value == Infinity) {
                     return "Infinity";
                 }
+                if (value && value.toFixed) {
+                    var e = 1, precision = 0;
+                    while (Math.round(value * e) / e !== value) { e *= 10; precision++; }
+                    
+                    if (precision > 15){
+                       return parseFloat(value.toFixed(15));
+                    } else {
+                       return value;
+                    }
+                }
                 return value;
             });
         },
